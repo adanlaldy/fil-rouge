@@ -2,22 +2,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { ITrainer } from "../types/trainer.type";
+import {IPokemon} from "@/types/pokemon.type.ts";
+import {fetchPokemonsByType} from "@/api/pokemons.ts";
 
-// Définition de l'interface pour la réponse API Pokémon
-interface IPokemon {
-    pokedex_id: number;
-    name: {
-        fr: string;
-        en: string;
-        jp: string;
-    };
-    types: Array<{
-        name: string;
-        image: string;
-    }>;
-}
 
-// Définition des types de Pokémon pour le combobox
+// Liste des types pour le combobox
 const pokemonTypes: string[] = [
     "Feu", "Eau", "Plante", "Électrique", "Psy",
     "Roche", "Sol", "Glace", "Dragon", "Ténèbres",
@@ -39,7 +28,7 @@ export default function CreateTrainer() {
         setNewTrainer({ name: "", age: 0, pokemonsCaught: 0 });
     };
 
-    // Lorsque selectedType change, récupérer et filtrer les Pokémon
+    // Récupère les pokémons filtrés via l'API dédiée
     useEffect(() => {
         if (!selectedType) {
             setFilteredPokemons([]);
@@ -49,27 +38,10 @@ export default function CreateTrainer() {
         setLoading(true);
         setError(null);
 
-        fetch('https://tyradex.vercel.app/api/v1/pokemon')
-            .then(res => {
-                if (!res.ok) throw new Error('Network response was not ok');
-                return res.json() as Promise<IPokemon[]>;
-            })
-            .then((data: IPokemon[]) => {
-                // Filtrer selon le type sélectionné
-                const filtered = data.filter((pokemon) =>
-                    Array.isArray(pokemon.types) &&
-                    pokemon.types.some(
-                        (typeObj) => typeObj?.name.toLowerCase() === selectedType.toLowerCase()
-                    )
-                );
-                setFilteredPokemons(filtered);
-            })
-            .catch(err => {
-                setError(err.message ?? 'Failed to fetch pokemons');
-            })
-            .finally(() => {
-                setLoading(false);
-            });
+        fetchPokemonsByType(selectedType)
+            .then(pokemons => setFilteredPokemons(pokemons))
+            .catch(err => setError(err.message ?? 'Erreur de récupération'))
+            .finally(() => setLoading(false));
     }, [selectedType]);
 
     return (
@@ -163,24 +135,21 @@ export default function CreateTrainer() {
                                     className="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-blue-300"
                                 >
                                     <option value="">-- Choisir un type --</option>
-                                    {pokemonTypes.map((type, idx) => (
-                                        <option key={idx} value={type}>{type}</option>
-                                    ))}
+                                    {pokemonTypes.map((type, idx) => <option key={idx} value={type}>{type}</option>)}
                                 </select>
                                 {loading && <p>Chargement...</p>}
                                 {error && <p className="text-red-500">Erreur : {error}</p>}
                                 {filteredPokemons.length > 0 && (
                                     <div className="max-h-64 overflow-y-auto">
                                         {filteredPokemons.map(pokemon => (
-                                            <p key={pokemon.pokedex_id} className="text-gray-700">
-                                                {pokemon.name.fr} ({pokemon.name.en} / {pokemon.name.jp})
-                                            </p>
+                                            <p key={pokemon.pokedex_id} className="text-gray-700">{pokemon.name.fr} ({pokemon.name.en})</p>
                                         ))}
                                     </div>
                                 )}
                             </div>
                         </CardContent>
                     </Card>
+
                 </div>
             </div>
         </>
