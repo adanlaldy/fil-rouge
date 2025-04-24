@@ -11,18 +11,28 @@ export async function fetchAllPokemons(): Promise<IPokemon[]> {
     return res.json();
 }
 
+export interface IPokemonWithSprite extends IPokemon {
+    regularSprite: string;
+}
+
+
 /**
  * Filtre la liste complète des Pokémon par type.
  * @param type - Nom du type (ex: "eau")
  */
 export async function fetchPokemonsByType(
     type: string
-): Promise<IPokemon[]> {
+): Promise<IPokemonWithSprite[]> {
     const all = await fetchAllPokemons();
-    return all.filter((pokemon) =>
+    const filtered = all.filter((pokemon) =>
         Array.isArray(pokemon.types) &&
         pokemon.types.some(
             (t) => t?.name.toLowerCase() === type.toLowerCase()
         )
     );
+    // Ajoute la sprite regular à chaque Pokémon filtré
+    return filtered.map((pokemon) => ({
+        ...pokemon,
+        regularSprite: pokemon.sprites?.regular ?? ""
+    }));
 }

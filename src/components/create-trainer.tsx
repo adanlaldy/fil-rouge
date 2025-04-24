@@ -1,9 +1,8 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react";
-import { ITrainer } from "../types/trainer.type";
-import {IPokemon} from "@/types/pokemon.type.ts";
-import {fetchPokemonsByType} from "@/api/pokemons.ts";
+import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
+import {Button} from "@/components/ui/button";
+import {useState, useEffect} from "react";
+import {ITrainer} from "../types/trainer.type";
+import {fetchPokemonsByType, IPokemonWithSprite} from "@/api/pokemons.ts";
 
 
 // Liste des types pour le combobox
@@ -16,16 +15,16 @@ const pokemonTypes: string[] = [
 
 export default function CreateTrainer() {
     const [trainers, setTrainers] = useState<ITrainer[]>([]);
-    const [newTrainer, setNewTrainer] = useState<ITrainer>({ name: "", age: 0, pokemonsCaught: 0 });
+    const [newTrainer, setNewTrainer] = useState<ITrainer>({name: "", age: 0, pokemonsCaught: 0});
     const [selectedType, setSelectedType] = useState<string>("");
-    const [filteredPokemons, setFilteredPokemons] = useState<IPokemon[]>([]);
+    const [filteredPokemons, setFilteredPokemons] = useState<IPokemonWithSprite[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
 
     const onHandleCreateTrainer = (e: React.FormEvent) => {
         e.preventDefault();
         setTrainers(current => [...current, newTrainer]);
-        setNewTrainer({ name: "", age: 0, pokemonsCaught: 0 });
+        setNewTrainer({name: "", age: 0, pokemonsCaught: 0});
     };
 
     // Récupère les pokémons filtrés via l'API dédiée
@@ -62,7 +61,7 @@ export default function CreateTrainer() {
                                     <input
                                         type="text"
                                         value={newTrainer.name}
-                                        onChange={e => setNewTrainer({ ...newTrainer, name: e.target.value })}
+                                        onChange={e => setNewTrainer({...newTrainer, name: e.target.value})}
                                         className="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-blue-300"
                                         required
                                     />
@@ -73,7 +72,7 @@ export default function CreateTrainer() {
                                         type="number"
                                         min="0"
                                         value={newTrainer.age}
-                                        onChange={e => setNewTrainer({ ...newTrainer, age: Number(e.target.value) })}
+                                        onChange={e => setNewTrainer({...newTrainer, age: Number(e.target.value)})}
                                         className="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-blue-300"
                                         required
                                     />
@@ -84,7 +83,10 @@ export default function CreateTrainer() {
                                         type="number"
                                         min="0"
                                         value={newTrainer.pokemonsCaught}
-                                        onChange={e => setNewTrainer({ ...newTrainer, pokemonsCaught: Number(e.target.value) })}
+                                        onChange={e => setNewTrainer({
+                                            ...newTrainer,
+                                            pokemonsCaught: Number(e.target.value)
+                                        })}
                                         className="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-blue-300"
                                         required
                                     />
@@ -108,12 +110,16 @@ export default function CreateTrainer() {
                             ) : (
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     {trainers.map((trainer, i) => (
-                                        <div key={i} className="border border-gray-200 rounded-xl p-4 bg-white shadow-sm hover:shadow-md transition">
-                                            <h3 title={trainer.name} className="text-lg font-bold text-gray-700 truncate overflow-hidden whitespace-nowrap">
+                                        <div key={i}
+                                             className="border border-gray-200 rounded-xl p-4 bg-white shadow-sm hover:shadow-md transition">
+                                            <h3 title={trainer.name}
+                                                className="text-lg font-bold text-gray-700 truncate overflow-hidden whitespace-nowrap">
                                                 {trainer.name}
                                             </h3>
-                                            <p className="text-gray-600">Âge : <span className="font-medium">{trainer.age}</span></p>
-                                            <p className="text-gray-600">Pokémons capturés : <span className="font-medium">{trainer.pokemonsCaught}</span></p>
+                                            <p className="text-gray-600">Âge : <span
+                                                className="font-medium">{trainer.age}</span></p>
+                                            <p className="text-gray-600">Pokémons capturés : <span
+                                                className="font-medium">{trainer.pokemonsCaught}</span></p>
                                         </div>
                                     ))}
                                 </div>
@@ -140,9 +146,18 @@ export default function CreateTrainer() {
                                 {loading && <p>Chargement...</p>}
                                 {error && <p className="text-red-500">Erreur : {error}</p>}
                                 {filteredPokemons.length > 0 && (
-                                    <div className="max-h-64 overflow-y-auto">
+                                    <div className="max-h-64 overflow-y-auto space-y-2">
                                         {filteredPokemons.map(pokemon => (
-                                            <p key={pokemon.pokedex_id} className="text-gray-700">{pokemon.name.fr} ({pokemon.name.en})</p>
+                                            <div key={pokemon.pokedex_id} className="flex items-center gap-2">
+                                                <img
+                                                    src={pokemon.regularSprite}
+                                                    alt={pokemon.name.en}
+                                                    className="w-15 h-15 rounded"
+                                                />
+                                                <span className="text-gray-700">
+                          {pokemon.name.fr} ({pokemon.name.en})
+                        </span>
+                                            </div>
                                         ))}
                                     </div>
                                 )}
