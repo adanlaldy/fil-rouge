@@ -12,6 +12,7 @@ function App() {
             <Router>
                 <Routes>
                     <Route path="/" element={<CreateTrainer/>}/>
+                    
                     {/*<Route path="/trainer/:id" element={<TrainerDetails/>}/>*/}
                 </Routes>
             </Router>
