@@ -1,25 +1,12 @@
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
-import {useState, useEffect} from "react";
+import {useState} from "react";
 import {ITrainer} from "../types/trainer.type";
-import {fetchPokemonsByType, IPokemonWithSprite} from "@/api/pokemons.ts";
-
-
-// Liste des types pour le combobox
-const pokemonTypes: string[] = [
-    "Feu", "Eau", "Plante", "Électrique", "Psy",
-    "Roche", "Sol", "Glace", "Dragon", "Ténèbres",
-    "Fée", "Acier", "Insecte", "Poison", "Vol",
-    "Spectre", "Normal", "Combat"
-];
+import {Link} from "react-router-dom";
 
 export default function CreateTrainer() {
     const [trainers, setTrainers] = useState<ITrainer[]>([]);
     const [newTrainer, setNewTrainer] = useState<ITrainer>({name: "", age: 0, pokemonsCaught: 0});
-    const [selectedType, setSelectedType] = useState<string>("");
-    const [filteredPokemons, setFilteredPokemons] = useState<IPokemonWithSprite[]>([]);
-    const [loading, setLoading] = useState<boolean>(false);
-    const [error, setError] = useState<string | null>(null);
 
     const onHandleCreateTrainer = (e: React.FormEvent) => {
         e.preventDefault();
@@ -27,32 +14,21 @@ export default function CreateTrainer() {
         setNewTrainer({name: "", age: 0, pokemonsCaught: 0});
     };
 
-    // Récupère les pokémons filtrés via l'API dédiée
-    useEffect(() => {
-        if (!selectedType) {
-            setFilteredPokemons([]);
-            return;
-        }
-
-        setLoading(true);
-        setError(null);
-
-        fetchPokemonsByType(selectedType)
-            .then(pokemons => setFilteredPokemons(pokemons))
-            .catch(err => setError(err.message ?? 'Erreur de récupération'))
-            .finally(() => setLoading(false));
-    }, [selectedType]);
-
     return (
-        <>
-            <h1 className="underline">Gestion des Dresseurs</h1>
-            <div className="max-w-6xl mx-auto p-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="min-h-screen py-10 px-4">
+            <div className="max-w-6xl mx-auto space-y-8">
+                <section className={'flex items-center justify-between'}>
+                    <p className="text-3xl font-bold text-center underline">Gestion des Dresseurs</p>
+                    <Link className="text-black hover:text-gray-700 visited:text-black underline" to="/all-pokemons">List pokemons by type</Link>
+                </section>
+
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
 
                     {/* Card 1 - Formulaire Dresseur */}
-                    <Card>
+                    <Card className="shadow-lg">
                         <CardHeader>
-                            <CardTitle>Créer un Dresseur Pokémon</CardTitle>
+                            <CardTitle className="text-xl font-semibold">Créer un Dresseur Pokémon</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <form onSubmit={onHandleCreateTrainer} className="space-y-4">
@@ -61,7 +37,7 @@ export default function CreateTrainer() {
                                     <input
                                         type="text"
                                         value={newTrainer.name}
-                                        onChange={e => setNewTrainer({...newTrainer, name: e.target.value})}
+                                        onChange={e => setNewTrainer({ ...newTrainer, name: e.target.value })}
                                         className="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-blue-300"
                                         required
                                     />
@@ -72,7 +48,7 @@ export default function CreateTrainer() {
                                         type="number"
                                         min="0"
                                         value={newTrainer.age}
-                                        onChange={e => setNewTrainer({...newTrainer, age: Number(e.target.value)})}
+                                        onChange={e => setNewTrainer({ ...newTrainer, age: Number(e.target.value) })}
                                         className="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-blue-300"
                                         required
                                     />
@@ -92,7 +68,7 @@ export default function CreateTrainer() {
                                     />
                                 </div>
 
-                                <Button type="submit" className="w-full mt-2 text-black">
+                                <Button type="submit" className="w-full mt-2 text-white bg-blue-600 hover:bg-blue-700 transition">
                                     Ajouter le dresseur
                                 </Button>
                             </form>
@@ -100,9 +76,9 @@ export default function CreateTrainer() {
                     </Card>
 
                     {/* Card 2 - Liste Dresseurs */}
-                    <Card>
+                    <Card className="shadow-lg">
                         <CardHeader>
-                            <CardTitle>Dresseurs enregistrés</CardTitle>
+                            <CardTitle className="text-xl font-semibold">Dresseurs enregistrés</CardTitle>
                         </CardHeader>
                         <CardContent>
                             {trainers.length === 0 ? (
@@ -110,16 +86,18 @@ export default function CreateTrainer() {
                             ) : (
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     {trainers.map((trainer, i) => (
-                                        <div key={i}
-                                             className="border border-gray-200 rounded-xl p-4 bg-white shadow-sm hover:shadow-md transition">
-                                            <h3 title={trainer.name}
-                                                className="text-lg font-bold text-gray-700 truncate overflow-hidden whitespace-nowrap">
+                                        <div
+                                            key={i}
+                                            className="border border-gray-200 rounded-xl p-4 bg-white shadow-sm hover:shadow-md transition"
+                                        >
+                                            <h3
+                                                title={trainer.name}
+                                                className="text-lg font-bold text-gray-700 truncate overflow-hidden whitespace-nowrap"
+                                            >
                                                 {trainer.name}
                                             </h3>
-                                            <p className="text-gray-600">Âge : <span
-                                                className="font-medium">{trainer.age}</span></p>
-                                            <p className="text-gray-600">Pokémons capturés : <span
-                                                className="font-medium">{trainer.pokemonsCaught}</span></p>
+                                            <p className="text-gray-600">Âge : <span className="font-medium">{trainer.age}</span></p>
+                                            <p className="text-gray-600">Pokémons capturés : <span className="font-medium">{trainer.pokemonsCaught}</span></p>
                                         </div>
                                     ))}
                                 </div>
@@ -127,46 +105,8 @@ export default function CreateTrainer() {
                         </CardContent>
                     </Card>
 
-                    {/* Card 3 - Filtrer par Type de Pokémon */}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Filtrer par type de Pokémon</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="space-y-4">
-                                <label className="block font-semibold text-gray-700">Type</label>
-                                <select
-                                    value={selectedType}
-                                    onChange={e => setSelectedType(e.target.value)}
-                                    className="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-blue-300"
-                                >
-                                    <option value="">-- Choisir un type --</option>
-                                    {pokemonTypes.map((type, idx) => <option key={idx} value={type}>{type}</option>)}
-                                </select>
-                                {loading && <p>Chargement...</p>}
-                                {error && <p className="text-red-500">Erreur : {error}</p>}
-                                {filteredPokemons.length > 0 && (
-                                    <div className="max-h-64 overflow-y-auto space-y-2">
-                                        {filteredPokemons.map(pokemon => (
-                                            <div key={pokemon.pokedex_id} className="flex items-center gap-2">
-                                                <img
-                                                    src={pokemon.regularSprite}
-                                                    alt={pokemon.name.en}
-                                                    className="w-15 h-15 rounded"
-                                                />
-                                                <span className="text-gray-700">
-                          {pokemon.name.fr} ({pokemon.name.en})
-                        </span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                        </CardContent>
-                    </Card>
-
                 </div>
             </div>
-        </>
-    );
+        </div>
+    )
 }

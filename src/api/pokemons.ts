@@ -15,7 +15,6 @@ export interface IPokemonWithSprite extends IPokemon {
     regularSprite: string;
 }
 
-
 /**
  * Filtre la liste complète des Pokémon par type.
  * @param type - Nom du type (ex: "eau")
@@ -36,3 +35,19 @@ export async function fetchPokemonsByType(
         regularSprite: pokemon.sprites?.regular ?? ""
     }));
 }
+
+// /**
+//  * Récupère un Pokémon par son ID.
+//  * @param id - ID du Pokémon
+//  */
+// export async function fetchPokemonById(id: number): Promise<IPokemonWithSprite> {
+//     const res = await fetch(`${BASE_URL}/pokemon/${id}`);
+//     if (!res.ok) throw new Error(`Failed to fetch pokemon with id ${id}: ${res.status}`);
+//
+//     const data: IPokemon = await res.json();
+//     return {
+//         ...data,
+//         regularSprite: data.sprites?.regular ?? ""
+//     };
+// }
+
