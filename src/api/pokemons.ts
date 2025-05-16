@@ -1,53 +1,45 @@
 import {IPokemon} from "@/types/pokemon.type.ts";
-
-const BASE_URL = 'https://tyradex.vercel.app/api/v1';
-
-/**
- * Récupère tous les Pokémon.
- */
-export async function fetchAllPokemons(): Promise<IPokemon[]> {
-    const res = await fetch(`${BASE_URL}/pokemon`);
-    if (!res.ok) throw new Error(`Failed to fetch all pokemons: ${res.status}`);
-    return res.json();
-}
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export interface IPokemonWithSprite extends IPokemon {
     regularSprite: string;
 }
 
-/**
- * Filtre la liste complète des Pokémon par type.
- * @param type - Nom du type (ex: "eau")
- */
-export async function fetchPokemonsByType(
-    type: string
-): Promise<IPokemonWithSprite[]> {
-    const all = await fetchAllPokemons();
-    const filtered = all.filter((pokemon) =>
-        Array.isArray(pokemon.types) &&
-        pokemon.types.some(
-            (t) => t?.name.toLowerCase() === type.toLowerCase()
-        )
-    );
-    // Ajoute la sprite regular à chaque Pokémon filtré
-    return filtered.map((pokemon) => ({
-        ...pokemon,
-        regularSprite: pokemon.sprites?.regular ?? ""
-    }));
-}
+export const pokemonApi = createApi({
+    reducerPath: "pokemonApi",
+    baseQuery: fetchBaseQuery({baseUrl: "https://tyradex.vercel.app/api/v1"}),
+    tagTypes: ["PokemonGen"],
+    endpoints: (builder) => ({
+        /**
+         * Récupère tous les Pokémon (liste complète).
+         */
+        getAllPokemons: builder.query<IPokemon[], void>({
+            query: () => `pokemon`,
+            providesTags: ["PokemonGen"],
+        }),
 
-/**
- * Récupère un Pokémon par son ID.
- * @param id - ID du Pokémon
- */
-export async function fetchPokemonById(id: number): Promise<IPokemonWithSprite> {
-    const res = await fetch(`${BASE_URL}/pokemon/${id}`);
-    if (!res.ok) throw new Error(`Failed to fetch pokemon with id ${id}: ${res.status}`);
+        /**
+         * Récupère un Pokémon par son ID.
+         */
+        getPokemonById: builder.query<IPokemon, number>({
+            query: (id) => `pokemon/${id}`,
+        }),
 
-    const data: IPokemon = await res.json();
-    return {
-        ...data,
-        regularSprite: data.sprites?.regular ?? ""
-    };
-}
+        getPokemonsByType: builder.query<IPokemonWithSprite[], string>({
+            query: () => 'pokemon', // récupère tous les pokemons
+            transformResponse: (response: IPokemon[], _meta, type) => {
+                return response
+                    .filter(pokemon =>
+                        Array.isArray(pokemon.types) &&
+                        pokemon.types.some(t => t?.name.toLowerCase() === type.toLowerCase())
+                    )
+                    .map(pokemon => ({
+                        ...pokemon,
+                        regularSprite: pokemon.sprites?.regular ?? '',
+                    }));
+            },
+        })
+    }),
+});
 
+export const {useGetAllPokemonsQuery, useGetPokemonByIdQuery, useGetPokemonsByTypeQuery} = pokemonApi

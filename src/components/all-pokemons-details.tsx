@@ -1,10 +1,9 @@
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card.tsx";
-import {useEffect, useState} from "react";
-import {fetchPokemonsByType, IPokemonWithSprite} from "@/api/pokemons.ts";
+import {useState} from "react";
+import { useGetPokemonsByTypeQuery} from "@/api/pokemons.ts";
 import {Link} from "react-router-dom";
 import {Button} from "@/components/ui/button.tsx";
 
-// Liste des types pour le combobox
 const pokemonTypes: string[] = [
     "Feu", "Eau", "Plante", "Électrik", "Psy",
     "Roche", "Sol", "Glace", "Dragon", "Ténèbres",
@@ -14,25 +13,10 @@ const pokemonTypes: string[] = [
 
 export default function AllPokemonsDetails() {
     const [selectedType, setSelectedType] = useState<string>("");
-    const [filteredPokemons, setFilteredPokemons] = useState<IPokemonWithSprite[]>([]);
-    const [loading, setLoading] = useState<boolean>(false);
-    const [error, setError] = useState<string | null>(null);
 
-    // Récupère les pokémons filtrés via l'API dédiée
-    useEffect(() => {
-        if (!selectedType) {
-            setFilteredPokemons([]);
-            return;
-        }
-
-        setLoading(true);
-        setError(null);
-
-        fetchPokemonsByType(selectedType)
-            .then(pokemons => setFilteredPokemons(pokemons))
-            .catch(err => setError(err.message ?? 'Erreur de récupération'))
-            .finally(() => setLoading(false));
-    }, [selectedType]);
+    const { data: filteredPokemons, error, isLoading } = useGetPokemonsByTypeQuery(selectedType, {
+        skip: !selectedType,
+    });
 
     return (
         <div className="flex justify-center items-start min-h-screen px-4 py-8">
@@ -54,22 +38,22 @@ export default function AllPokemonsDetails() {
                             ))}
                         </select>
 
-                        {loading && <p>Chargement...</p>}
-                        {error && <p className="text-red-500">Erreur : {error}</p>}
+                        {isLoading && <p>Chargement...</p>}
+                        {error && <p className="text-red-500">Erreur : {(error as any).status ?? 'Erreur inconnue'}</p>}
 
-                        {filteredPokemons.length > 0 && (
+                        {filteredPokemons && filteredPokemons.length > 0 && (
                             <div className="max-h-[400px] overflow-y-auto space-y-2">
                                 {filteredPokemons.map(pokemon => (
-                                    <div className={'flex items-center justify-between'}>
-                                        <div key={pokemon.pokedex_id} className="flex items-center gap-4">
+                                    <div key={pokemon.pokedex_id} className={'flex items-center justify-between'}>
+                                        <div className="flex items-center gap-4">
                                             <img
                                                 src={pokemon.regularSprite}
                                                 alt={pokemon.name.en}
                                                 className="w-16 h-16 object-contain rounded"
                                             />
                                             <span className="text-gray-700">
-                                            {pokemon.name.fr} ({pokemon.name.en})
-                                        </span>
+                                                {pokemon.name.fr} ({pokemon.name.en})
+                                            </span>
                                         </div>
                                         <Link to={`/pokemon-details/${pokemon.pokedex_id}`}>
                                             <Button variant="secondary" size="sm">
@@ -84,5 +68,5 @@ export default function AllPokemonsDetails() {
                 </CardContent>
             </Card>
         </div>
-    )
+    );
 }
