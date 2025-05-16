@@ -1,6 +1,6 @@
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card.tsx";
 import {useState} from "react";
-import { useGetPokemonsByTypeQuery} from "@/api/pokemons.ts";
+import { useGetPokemonsByTypeQuery} from "@/api/pokemonsApi.ts";
 import {Link} from "react-router-dom";
 import {Button} from "@/components/ui/button.tsx";
 

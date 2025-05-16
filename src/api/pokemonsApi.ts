@@ -1,5 +1,5 @@
 import {IPokemon} from "@/types/pokemon.type.ts";
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 
 export interface IPokemonWithSprite extends IPokemon {
     regularSprite: string;
@@ -10,13 +10,6 @@ export const pokemonApi = createApi({
     baseQuery: fetchBaseQuery({baseUrl: "https://tyradex.vercel.app/api/v1"}),
     tagTypes: ["PokemonGen"],
     endpoints: (builder) => ({
-        /**
-         * Récupère tous les Pokémon (liste complète).
-         */
-        getAllPokemons: builder.query<IPokemon[], void>({
-            query: () => `pokemon`,
-            providesTags: ["PokemonGen"],
-        }),
 
         /**
          * Récupère un Pokémon par son ID.
@@ -42,4 +35,4 @@ export const pokemonApi = createApi({
     }),
 });
 
-export const {useGetAllPokemonsQuery, useGetPokemonByIdQuery, useGetPokemonsByTypeQuery} = pokemonApi
+export const {useGetPokemonByIdQuery, useGetPokemonsByTypeQuery} = pokemonApi

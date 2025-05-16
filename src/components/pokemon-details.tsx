@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useGetPokemonByIdQuery } from "@/api/pokemons.ts";
+import { useGetPokemonByIdQuery } from "@/api/pokemonsApi.ts";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card.tsx";
 
 export default function PokemonDetails() {
