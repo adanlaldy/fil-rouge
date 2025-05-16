@@ -55,7 +55,7 @@ export default function AllPokemonsDetails() {
                                                 {pokemon.name.fr} ({pokemon.name.en})
                                             </span>
                                         </div>
-                                        <Link to={`/pokemon-details/${pokemon.pokedex_id}`}>
+                                        <Link to={`/pokemon/${pokemon.pokedex_id}`}>
                                             <Button variant="secondary" size="sm">
                                                 Voir les détails
                                             </Button>

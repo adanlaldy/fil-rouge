@@ -21,7 +21,7 @@ export default function Header() {
                         to="/all-pokemons"
                         className="text-blue-600 hover:text-blue-700 visited:text-gray-700 font-medium"
                     >
-                        Pokémons
+                        Tous les Pokémons
                     </Link>
                 </nav>
             </div>
