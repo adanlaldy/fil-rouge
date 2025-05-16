@@ -1,6 +1,4 @@
-import { Search, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 
 interface NotFoundProps {
   title?: string
@@ -30,27 +28,9 @@ export function NotFound({
       <p className="mt-6 text-pretty text-lg font-medium text-muted-foreground sm:text-xl/8">
         {description}
       </p>
-      <div className="mt-10 flex flex-col sm:flex-row gap-y-3 sm:space-x-2 mx-auto sm:max-w-sm">
-        <div className="relative w-full">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input placeholder="Search" className="pl-8" />
-        </div>
-        <Button variant="outline">Search</Button>
-      </div>
       <div className="mt-10 flex flex-col sm:flex-row sm:items-center sm:justify-center gap-y-3 gap-x-6">
-        <Button variant="secondary" asChild className="group">
-          <a href="#">
-            <ArrowLeft
-              className="me-2 ms-0 opacity-60 transition-transform group-hover:-translate-x-0.5"
-              size={16}
-              strokeWidth={2}
-              aria-hidden="true"
-            />
-            Go back
-          </a>
-        </Button>
-        <Button className="-order-1 sm:order-none" asChild>
-          <a href="#">Take me home</a>
+        <Button className="-order-1 sm:order-none bg-blue-100 hover:bg-blue-200 text-black" asChild>
+          <a href="/">Take me home</a>
         </Button>
       </div>
     </div>

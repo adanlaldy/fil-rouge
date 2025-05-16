@@ -36,18 +36,18 @@ export async function fetchPokemonsByType(
     }));
 }
 
-// /**
-//  * Récupère un Pokémon par son ID.
-//  * @param id - ID du Pokémon
-//  */
-// export async function fetchPokemonById(id: number): Promise<IPokemonWithSprite> {
-//     const res = await fetch(`${BASE_URL}/pokemon/${id}`);
-//     if (!res.ok) throw new Error(`Failed to fetch pokemon with id ${id}: ${res.status}`);
-//
-//     const data: IPokemon = await res.json();
-//     return {
-//         ...data,
-//         regularSprite: data.sprites?.regular ?? ""
-//     };
-// }
+/**
+ * Récupère un Pokémon par son ID.
+ * @param id - ID du Pokémon
+ */
+export async function fetchPokemonById(id: number): Promise<IPokemonWithSprite> {
+    const res = await fetch(`${BASE_URL}/pokemon/${id}`);
+    if (!res.ok) throw new Error(`Failed to fetch pokemon with id ${id}: ${res.status}`);
+
+    const data: IPokemon = await res.json();
+    return {
+        ...data,
+        regularSprite: data.sprites?.regular ?? ""
+    };
+}
 

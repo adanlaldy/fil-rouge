@@ -1,6 +1,8 @@
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card.tsx";
 import {useEffect, useState} from "react";
 import {fetchPokemonsByType, IPokemonWithSprite} from "@/api/pokemons.ts";
+import {Link} from "react-router-dom";
+import {Button} from "@/components/ui/button.tsx";
 
 // Liste des types pour le combobox
 const pokemonTypes: string[] = [
@@ -33,7 +35,7 @@ export default function AllPokemonsDetails() {
     }, [selectedType]);
 
     return (
-        <div className="flex justify-center items-start min-h-[80vh] px-4 py-8">
+        <div className="flex justify-center items-start min-h-screen px-4 py-8">
             <Card className="w-full max-w-4xl shadow-lg">
                 <CardHeader>
                     <CardTitle className="text-2xl font-bold">Filtrer par type de Pokémon</CardTitle>
@@ -58,15 +60,22 @@ export default function AllPokemonsDetails() {
                         {filteredPokemons.length > 0 && (
                             <div className="max-h-[400px] overflow-y-auto space-y-2">
                                 {filteredPokemons.map(pokemon => (
-                                    <div key={pokemon.pokedex_id} className="flex items-center gap-4">
-                                        <img
-                                            src={pokemon.regularSprite}
-                                            alt={pokemon.name.en}
-                                            className="w-16 h-16 object-contain rounded"
-                                        />
-                                        <span className="text-gray-700">
-                    {pokemon.name.fr} ({pokemon.name.en})
-                  </span>
+                                    <div className={'flex items-center justify-between'}>
+                                        <div key={pokemon.pokedex_id} className="flex items-center gap-4">
+                                            <img
+                                                src={pokemon.regularSprite}
+                                                alt={pokemon.name.en}
+                                                className="w-16 h-16 object-contain rounded"
+                                            />
+                                            <span className="text-gray-700">
+                                            {pokemon.name.fr} ({pokemon.name.en})
+                                        </span>
+                                        </div>
+                                        <Link to={`/pokemon-details/${pokemon.pokedex_id}`}>
+                                            <Button variant="secondary" size="sm">
+                                                Voir les détails
+                                            </Button>
+                                        </Link>
                                     </div>
                                 ))}
                             </div>

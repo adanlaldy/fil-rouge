@@ -1,8 +1,9 @@
-import CreateTrainer from "../src/components/create-trainer";
-import {NotFound} from "../src/components/ui/not-found";
+import CreateTrainer from "../components/create-trainer.tsx";
+import {NotFound} from "../components/ui/not-found.tsx";
 import {RouteObject} from "react-router-dom";
-import AllPokemonsDetails from "../src/components/all-pokemons-details";
-import RootLayout from "./RootLayout";
+import AllPokemonsDetails from "../components/all-pokemons-details.tsx";
+import RootLayout from "./RootLayout.tsx";
+import PokemonDetails from "@/components/pokemon-details.tsx";
 
 const myRoutes: RouteObject[] = [
     {
@@ -16,6 +17,10 @@ const myRoutes: RouteObject[] = [
             {
                 path: "all-pokemons",
                 element: <AllPokemonsDetails/>
+            },
+            {
+                path: "pokemon/:id",
+                element: <PokemonDetails/>
             },
             {
                 path: "*",
